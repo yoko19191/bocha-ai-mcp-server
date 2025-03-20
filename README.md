@@ -61,14 +61,14 @@ npm install
 npm run build
 ```
 
-
 ## Configuration
 
 **mcp.json**
+
 ```json
 {
   "mcpServers": {
-    "github": {
+    "bocha-ai-search": {
       "command": "node",
       "args": [
         "/ABSOLUTE/PATH/bocha-ai-mcp-server/build/index.js"
@@ -81,13 +81,11 @@ npm run build
 }
 ```
 
-
 **cursor**
+
 ```bash
 env BOCHA_API_KEY=YOUR_BOCHA_API_KEY node /ABSOLUTE/PATH/bocha-ai-mcp-server/build/index.js
 ```
-
-
 
 ## FURTURE_WORK
 
