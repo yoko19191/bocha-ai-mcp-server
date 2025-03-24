@@ -196,32 +196,43 @@ export function parseWebSearchResponse(response: WebSearchResponse, includeImage
     };
 }
 
-// Format to Markdown if raw_json is false(default)
+// 格式化为 Markdown
 function formatToMarkdown(result: FormattedWebSearchResult): string {
     let markdown = `## 搜索结果：${result.query}\n\n`;
     markdown += `找到约 ${result.totalEstimatedMatches} 条结果\n\n`;
 
-    // Format web pages results
+    // 格式化网页结果
     result.values.forEach((value, index) => {
-        markdown += `### ${index + 1}. [${value.siteName} - ${value.name}](${value.displayUrl})\n\n`;
-        markdown += `${value.snippet}\n\n`;
+        markdown += `引用: ${index + 1}\n`;
+        markdown += `标题: ${value.name}\n`;
+        markdown += `URL: ${value.displayUrl}\n`;
+        markdown += `摘要: ${value.snippet}\n`;
         if (value.summary) {
-            markdown += `**总结：** ${value.summary}\n\n`;
+            markdown += `详细内容: ${value.summary}\n`;
         }
+        markdown += `网站名称: ${value.siteName}\n`;
+        if (value.siteIcon) {
+            markdown += `网站图标: ${value.siteIcon}\n`;
+        }
+        markdown += `发布时间: ${value.dateLastCrawled}\n`;
         if (value.image) {
-            markdown += `![${value.image.name}](${value.image.thumbnailUrl})\n\n`;
+            markdown += `\n![${value.image.name}](${value.image.thumbnailUrl})\n`;
         }
-        markdown += `---\n\n`;
+        markdown += `\n---\n\n`;
     });
 
-    // Format unused images
+    // 格式化未匹配的图片
     if (result.images_values.length > 0) {
         markdown += `## 相关图片\n\n`;
         result.images_values.forEach((image, index) => {
-            markdown += `### ${index + 1}. ${image.name}\n\n`;
-            markdown += `[![${image.name}](${image.thumbnailUrl})](${image.contentUrl})\n\n`;
-            markdown += `来源：[${image.hostPageDisplayUrl}](${image.hostPageUrl})\n\n`;
-            markdown += `---\n\n`;
+            markdown += `引用: ${index + 1}\n`;
+            markdown += `标题: ${image.name}\n`;
+            markdown += `URL: ${image.contentUrl}\n`;
+            markdown += `来源页面: ${image.hostPageDisplayUrl}\n`;
+            markdown += `发布时间: ${image.datePublished}\n`;
+            markdown += `尺寸: ${image.width}x${image.height}\n`;
+            markdown += `\n![${image.name}](${image.thumbnailUrl})\n`;
+            markdown += `\n---\n\n`;
         });
     }
 

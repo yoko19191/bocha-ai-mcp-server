@@ -1,14 +1,17 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { config } from "dotenv";
+import dotenv from "dotenv";
 import { performWebSearch } from "./web_search.js";
 
 // Load environment variables
-config();
+dotenv.config();
 
 // Get API KEY from environment variables
-const API_KEY = process.env.BOCHA_API_KEY;
+const BOCHA_API_KEY = process.env.BOCHA_API_KEY;
+if (!BOCHA_API_KEY) {
+    throw new Error("BOCHA_API_KEY is required");
+}
 
 // Create MCP server instance
 const server = new McpServer({
@@ -19,7 +22,7 @@ const server = new McpServer({
 // Register MCP tools
 server.tool(
     "bocha_web_search",
-    "使用 Bocha AI 进行网页搜索，返回网页内容和相关图片。支持 Markdown 格式的易读输出或原始 JSON 数据",
+    "使用 Bocha AI 进行网页搜索，搜索结果的详细信息，包括网页标题、网页URL、网页摘要、网站名称、网站Icon、网页发布时间等。支持 Markdown 格式的易读输出或原始 JSON 数据",
     {
         query: z.string().describe("搜索关键词"),
         freshness: z.enum(["OneDay", "OneWeek", "OneMonth", "OneYear", "noLimit"]).optional().describe("搜索时间范围(default: noLimit)"),
@@ -30,7 +33,7 @@ server.tool(
     async ({ query, freshness, summary, count, raw_json }) => {
         try {
             const searchResult = await performWebSearch(
-                API_KEY!,
+                BOCHA_API_KEY,
                 { query, freshness, summary, count, raw_json }
             );
 
